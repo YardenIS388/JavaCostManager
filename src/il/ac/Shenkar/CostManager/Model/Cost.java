@@ -1,4 +1,4 @@
-package Shenkar.CostManager.Model;
+package il.ac.Shenkar.CostManager.Model;
 
 import java.math.BigDecimal;
 
