@@ -21,6 +21,7 @@ public class MainApp {
     private JButton btAddProduct;
     private JButton btThisMonthReport;
     private JButton btReportByMonthYear;
+    private JButton btAddCategory;
     private JTextField tfMessage;
     private JPanel panelAddCost;
     private JPanel panelWrapper;
@@ -41,6 +42,7 @@ public class MainApp {
     private JPanel panelMonthYear;
     private JLabel labelMonthYear;
     private JLabel thisMonthAmount;
+    private JPanel panelBottomContainer;
 
     public MainApp() {
         frame = new JFrame("Cost Manager");
@@ -76,6 +78,8 @@ public class MainApp {
 
         btThisMonthReport = new JButton("View Report");
         btReportByMonthYear = new JButton("View Report");
+        btAddCategory = new JButton("+");
+        panelBottomContainer = new JPanel();
 
         inputDay = new JComboBox(new String[]{"day","1","2","3","4","5", "6", "7", "8", "9", "10", "11","12", "13", "14", "15", "16", "17", "18"});
         inputMonth = new JComboBox(new String[]{"month","1","2","3","4","5", "6", "7", "8", "9", "10", "11","12"});
@@ -144,6 +148,21 @@ public class MainApp {
             }
         });
 
+        btAddCategory.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Click");
+                try{
+                    AddCategoryDialog addCategory = new AddCategoryDialog();
+                    addCategory.displayAddCategory();
+                }catch (Exception ex){
+                    setMessage("Error On: Add New Category");
+                    System.out.println(ex);
+                }
+
+            }
+        });
+
         /* * Frame Settings */
         frame.setLayout(new BorderLayout());
         frame.add(tfMessage, BorderLayout.SOUTH);
@@ -169,12 +188,13 @@ public class MainApp {
         /* * Add Cost  Panel Settings */
         panelAddCost.setLayout(new FlowLayout());
         panelAddCost.setBackground(Color.white);
-        panelAddCost.add(new JLabel("Add New Cost"));
+        panelAddCost.add(new JLabel("Add Cost: "));
         panelAddCost.add(panelId);
         panelAddCost.add(panelPrice);
         panelAddCost.add(panelName);
         panelAddCost.add(panelBtAddProduct);
         panelAddCost.setBorder(new RoundedBorder(10));
+
 
         panelAddCost.add(inputCurrency);
 
@@ -198,13 +218,12 @@ public class MainApp {
         panelBtAddProduct.add(btAddProduct);
 
         panelBtAddProduct.setBackground(Color.white);
-
+        btAddCategory.setSize(new Dimension(10,20));
         /* Dashbord View*/
         panelReports.setLayout(new GridLayout(3, 1));
         panelReports.add(labelReportsTitle);
         labelReportsTitle.setFont(new Font("Ariel",Font.BOLD, 18));
         panelReports.add(panelThisMonth);
-
         panelThisMonth.add(labelThisMonth);
         panelReports.add(panelMonthYear);
         panelMonthYear.add( labelMonthYear);
@@ -216,6 +235,15 @@ public class MainApp {
         panelMonthYear.add(inputMonth);
         panelMonthYear.add(inputYear);
         panelMonthYear.add(btReportByMonthYear);
+        panelWrapper.add(panelBottomContainer);
+        panelBottomContainer.setSize(new Dimension(800,200));
+        panelBottomContainer.setLayout(new FlowLayout());
+        panelBottomContainer.add(new JLabel("Create New Category: "));
+        panelBottomContainer.setBorder(new EmptyBorder(50, 0, 0, 0));
+        panelBottomContainer.add(btAddCategory);
+        btAddCategory.setSize(new Dimension(20, 10));
+
+
 
 
     }
