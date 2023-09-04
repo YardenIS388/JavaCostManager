@@ -41,10 +41,13 @@ public class CostDAO {
         }
     }
 
+/*
     public List<Cost> getCostsByDate(Date date) {
-        /**
+        */
+/**
          * retrieve all costs on a specific date from the costs table and return them as a list
-         */
+         *//*
+
         List<Cost> costs = new ArrayList<>();
         String sql = "SELECT * FROM costs WHERE date = ?";
 
@@ -70,6 +73,7 @@ public class CostDAO {
 
         return costs;
     }
+*/
 
     public List<Cost> getCostsByMonthYear(Date date) {
         /**

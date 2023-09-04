@@ -1,11 +1,7 @@
 package il.ac.Shenkar.CostManager.Model;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +23,40 @@ public class DerbyDatabaseDAOModel implements IModel {
             dao = new DerbyDatabaseDAOModel();
         }
         return dao;
+    }
+
+    @Override
+    public void createCostsTableIfNotExists() throws DAOException {
+        Connection connection = null;
+        Statement statement = null;
+
+        try {
+            // Initialize DerbyDB connection (you may need to specify the correct database URL)
+            connection = DriverManager.getConnection("jdbc:derby:costs_mng;create=true");
+            statement = connection.createStatement();
+
+            // Check if the "costs" table exists
+            ResultSet resultSet = connection.getMetaData().getTables(null, null, "costs", null);
+
+            if (!resultSet.next()) {
+                // The "costs" table doesn't exist, so create it
+                statement.executeUpdate("CREATE TABLE costs ("
+                        + "id INT GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
+                        + "name VARCHAR(255),"
+                        + "category VARCHAR(255),"
+                        + "sum INT,"
+                        + "currency VARCHAR(50),"
+                        + "description VARCHAR(255),"
+                        + "date DATE"
+                        + ")");
+                System.out.println("Created 'costs' table");
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Problem checking or creating 'costs' table", e);
+        } finally {
+            // Close resources
+            closeResources(connection, (PreparedStatement) statement, null);
+        }
     }
 
     @Override
@@ -55,21 +85,28 @@ public class DerbyDatabaseDAOModel implements IModel {
         }
     }
 
-
     @Override
-    public List<Cost> getCostsByDate(Date date) {
+    public List<Cost> getCostsByDate(Date date) throws DAOException {
         /**
          * retrieve all costs on a specific date from the costs table and return them as a list
          */
-        List<Cost> costs = new ArrayList<>();
         Connection connection = null;
-        String sql = "SELECT * FROM costs WHERE date = ?";
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        List<Cost> costs = new ArrayList<>();
 
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        try {
+            // Initialize DerbyDB connection (replace with your database URL)
+            connection = DriverManager.getConnection("jdbc:derby:costs_mng;create=true");
+
+            // Define the SQL statement to retrieve costs by date
+            statement = connection.prepareStatement("SELECT * FROM costs WHERE date = ?");
             statement.setDate(1, new java.sql.Date(date.getTime()));
 
-            ResultSet resultSet = statement.executeQuery();
+            // Execute the SQL query
+            resultSet = statement.executeQuery();
 
+            // Process the query results
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String category = resultSet.getString("category");
@@ -81,45 +118,60 @@ public class DerbyDatabaseDAOModel implements IModel {
                 costs.add(new Cost(id, category, sum, currency, description, costDate));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            // Handle exceptions properly in your application
+            throw new DAOException("Problem retrieving costs by date", e);
+        } finally {
+            closeResources(connection, statement, resultSet);
         }
 
         return costs;
     }
 
-
-
     @Override
-    public List<Cost> getCosts() {
+    public List<Cost> getCosts() throws DAOException{
         /**
          * retrieve all costs on a specific date from the costs table and return them as a list
          */
         List<Cost> costs = new ArrayList<>();
         Connection connection = null;
-        String sql = "SELECT * FROM costs";
+        String sqlQuery = "SELECT * FROM costs";
 
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        try {
+            // Establish a database connection (you may need to specify the correct database URL)
+            connection = DriverManager.getConnection("jdbc:derby:cost_mng;create=true");
 
-            ResultSet resultSet = statement.executeQuery();
+            // Prepare and execute the SQL query
+            try (PreparedStatement statement = connection.prepareStatement(sqlQuery);
+                 ResultSet resultSet = statement.executeQuery()) {
 
-            while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String category = resultSet.getString("category");
-                BigDecimal sum = resultSet.getBigDecimal("sum");
-                String currency = resultSet.getString("currency");
-                String description = resultSet.getString("description");
-                Date costDate = resultSet.getDate("date");
+                // Process the query results
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    String category = resultSet.getString("category");
+                    BigDecimal sum = resultSet.getBigDecimal("sum");
+                    String currency = resultSet.getString("currency");
+                    String description = resultSet.getString("description");
+                    Date costDate = resultSet.getDate("date");
 
-                costs.add(new Cost(id, category, sum, currency, description, costDate));
+                    // Create a Cost object and add it to the list
+                    costs.add(new Cost(id, category, sum, currency, description, costDate));
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            // Handle exceptions properly in your application
+            throw new DAOException("Problem retrieving costs", e);
+        } finally {
+            // Close the database connection (resource management)
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                throw new DAOException("Problem closing database connection", e);
+            }
         }
-
         return costs;
     }
+
+
 /*
     @Override
     public Product getProduct(int id) throws DAOException {
