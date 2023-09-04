@@ -1,6 +1,7 @@
 package il.ac.Shenkar.CostManager.Model;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class Cost {
 
@@ -9,17 +10,18 @@ public class Cost {
     private BigDecimal sum; // The amount of the cost
     private String currency; // Currency of the cost (e.g., USD, EUR)
     private String description; // Description of the cost
-    private String date; // Date of the cost (you can use a String or a Date object)
+    private Date date; // Date of the cost (you can use a String or a Date object)
 
     // Constructor
-    public Cost(int id, String category, BigDecimal sum, String currency, String description, String date) {
-        this.id = id;
-        this.category = category;
-        this.sum = sum;
-        this.currency = currency;
-        this.description = description;
-        this.date = date;
+    public Cost(int id, String category, BigDecimal sum, String currency, String description, Date date) {
+        setId(id);
+        setCategory(category); // Use the setter method to set the category
+        setSum(sum);
+        setCurrency(currency);
+        setDescription(description);
+        setDate(date);
     }
+
 
     // Getters and Setters for all fields
 
@@ -63,13 +65,9 @@ public class Cost {
         this.description = description;
     }
 
-    public String getDate() {
-        return date;
-    }
+    public Date getDate() { return date; }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
+    public void setDate(Date date) { this.date = date; }
 
 
 
