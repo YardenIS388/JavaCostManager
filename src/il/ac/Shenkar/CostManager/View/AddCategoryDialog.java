@@ -8,6 +8,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class AddCategoryDialog {
+
     private String category;
     private JFrame frameAddCategory;
 
@@ -30,6 +31,8 @@ public class AddCategoryDialog {
     }
 
     public void displayAddCategory(){
+        /*
+        * This is How the frame for the add category screen is loaded*/
         System.out.println("display");
         frameAddCategory.addWindowListener(new WindowAdapter() {
             @Override
