@@ -2,6 +2,7 @@ package il.ac.Shenkar.CostManager.Model;
 
 public class Category {
     private String name;
+    private int id;
 
     // Constructor using setters
     public Category(String name) {
