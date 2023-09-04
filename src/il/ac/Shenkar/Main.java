@@ -1,6 +1,4 @@
 package il.ac.Shenkar;
-
-//import il.ac.Shenkar.CostManager.Model.SimpleApp;
 import il.ac.Shenkar.CostManager.Model.Cost;
 import il.ac.Shenkar.CostManager.Model.DAOException;
 import il.ac.Shenkar.CostManager.Model.DerbyDatabaseDAOModel;
@@ -19,7 +17,11 @@ public class Main {
             BigDecimal bigDecimalValue = new BigDecimal(intValue);
             Date currentDate  = new Date();
             IModel dao = DerbyDatabaseDAOModel.getInstance();
+            dao.createCostsTableIfNotExists();
             var cost1 = new Cost(1,"test",bigDecimalValue,"string2","string3",currentDate);
+            dao.addCost(cost1);
+            System.out.println(dao.getCosts());
+
         } catch (DAOException ex) {
             throw new RuntimeException(ex);
         }

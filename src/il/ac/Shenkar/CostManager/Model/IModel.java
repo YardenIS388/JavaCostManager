@@ -4,9 +4,11 @@ import java.util.Date;
 import java.util.List;
 
 public interface IModel {
+    void createCostsTableIfNotExists() throws DAOException;
+
     void addCost(Cost cost) throws DAOException;
 
-    List<Cost> getCostsByDate(Date date);
+    List<Cost> getCostsByDate(Date date) throws DAOException;
 
-    List<Cost> getCosts();
+    List<Cost> getCosts() throws DAOException;
 }
